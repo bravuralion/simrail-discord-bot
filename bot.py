@@ -4,13 +4,17 @@ import json
 import asyncio
 from collections import defaultdict
 from datetime import datetime
+
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
-SERVERS = ['de1', 'de2', 'de3', 'de4', 'de5']  # Enter your desired Servers here
-CHANNEL_ID = 1074655931910074448 # Enter the Channel ID where the Bot should Post the Messages
-LAST_UPDATED = None
+server_sets = {
+    'default': ['de1', 'de2', 'de3', 'de4', 'de5'],
+    'en': ['en1', 'en2', 'en3', 'en4', 'en5', 'en6']
+}
+
+update_interval = 30
 
 async def get_data(server):
     async with aiohttp.ClientSession() as session:
@@ -18,16 +22,17 @@ async def get_data(server):
             text = await resp.text()
             return json.loads(text)
 
-async def check_stations():
-    global LAST_UPDATED
-    channel = client.get_channel(CHANNEL_ID)
+async def check_stations(server_list, servers, last_updated, channel):
     messages = defaultdict(list)
 
-    for server in SERVERS:
+    for server in server_list:
         data = await get_data(server)
         for station in data['data']:
             if not station['DispatchedBy']:
-                messages[station['Name']].append(server)
+                messages[station['Name']].append(servers[server])
+
+    if not messages:
+        return last_updated
 
     output = ""
     for station, servers in sorted(messages.items()):
@@ -37,29 +42,47 @@ async def check_stations():
             server_list = ", ".join(servers[:-1]) + " and " + servers[-1]
             output += f"**{station}** is open on servers {server_list}\n"
 
-    if output:
-        if LAST_UPDATED is None:
-            message = "Stations currently open:\n" + output
-        else:
-            message = f"Stations currently open (updated at {LAST_UPDATED}):\n" + output
-        if channel.last_message:
-            await channel.last_message.edit(content=message)
-        else:
-            await channel.send(message)
-    else:
-        await channel.send("No stations currently open.")
-
-    LAST_UPDATED = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    last_updated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = f"Stations currently open (last updated at {last_updated}):\n" + output
+    message += "This bot was developed and provided by http://simrail.community"
+    try:
+        async for msg in channel.history(limit=1):
+            if msg.author == client.user:
+                await msg.edit(content=message)
+                return last_updated
+        await channel.send(message)
+    except discord.errors.Forbidden:
+        pass
+    return last_updated
 
 @client.event
 async def on_ready():
-
     print('Bot is ready')
-    channel = client.get_channel(CHANNEL_ID)
-    await channel.purge(limit=100)
-    await check_stations()
-    while True:
-        await check_stations()
-        await asyncio.sleep(60)
 
-client.run('123456') # Enter the Token from your Bot
+@client.event
+async def on_message(message):
+    global channel_id
+    if message.content.startswith('!set_channel'):
+        channel_id = int(message.content.split()[1])
+        await message.channel.send(f"Channel set to {channel_id}")
+        await message.channel.purge(limit=1)
+    elif message.content.startswith('!stations'):
+        if not channel_id:
+            await message.channel.send("Channel not set. Use !set_channel <channel_id> first.")
+            return
+        server_list = message.content.split()[1:]
+        if not server_list:
+            return
+        invalid_servers = set(server_list) - set(server_sets.keys())
+        if invalid_servers:
+            invalid_server_list = ", ".join(invalid_servers)
+            await message.channel.send(f"Invalid server(s): {invalid_server_list}")
+            return
+        channel = client.get_channel(channel_id)
+        last_updated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        await message.channel.purge(limit=None)
+        while True:
+            last_updated = await check_stations([server for set in server_list for server in server_sets[set]], {server: server_name for set in server_list for server, server_name in zip(server_sets[set], server_sets[set])}, last_updated, channel)
+            await asyncio.sleep(update_interval)
+
+client.run('bot_secret_in_here')
