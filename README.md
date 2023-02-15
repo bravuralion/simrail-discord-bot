@@ -17,15 +17,20 @@ You can edit the server list with **!stations**. To do this, you need to adjust 
 ## Installing the bot on a Discord server
 
 First of all, you need to make sure that the server or hosting provider you want to run the bot on has Python available, since the bot is written in Python. If you don't have your own server, you can use https://bot-hosting.net/. You have to make sure that the packages **discord aiohttp asyncio** are installed. If not you can install them via **pip install PACKAGENAME**. In the example bot-hosting you can enter them under startup:
+
 ![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/packages.png)
 
-In order to use the bot on a Discord server, you need to create a new application on [Discord Developer Portal](https://discord.com/developers). As soon as you have created your bot with your desired name, you have to copy the token via: ![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/token.jpg)
+In order to use the bot on a Discord server, you need to create a new application on [Discord Developer Portal](https://discord.com/developers). As soon as you have created your bot with your desired name, you have to copy the token via: 
+
+![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/token.jpg)
 Then insert the token here: `client.run('bot_secret_in_here')` at the very end of the script.
 
 Next, you need to invite the bot to your server. To do this, go to OAuth2 -> Url Generator and select bot under Scopes. At Bot Permissions select either Administrator or at least Send Messages and Manage Messages. Then copy the url and open it in a new tab to invite the bot to your server:
+
 ![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/invite.jpg)
 
 As soon as you start the bot, the following should be displayed in the console:
+
 ![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/botlog.jpg)
 If an error appears here, either the token is not correct or you have forgotten to install a package. From now on the bot is ready for use.
 
