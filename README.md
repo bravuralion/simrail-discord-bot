@@ -6,7 +6,7 @@ This Discord bot is intended for Simrail Discord community servers. It shows in 
 # Current commands of the bot
 
  - **!set_channel** ID
-- This command tells the bot which channel it should use to post the updates.
+	- This command tells the bot which channel it should use to post the updates.
  - **!stations** en/en/pl
 	 - This command sets which server groups it should check for availability.
 
