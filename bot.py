@@ -67,7 +67,7 @@ async def on_message(message):
         channel = message.channel_mentions[0]
         channel_id = channel.id
         await message.channel.send(f"Channel set to {channel.mention}")
-        await message.channel.purge(limit=1)
+        await message.channel.purge(limit=3)
     elif message.content.startswith('!stations'):
         if not channel_id:
             await message.channel.send("Channel not set. Use !set_channel <channel_mention> first.")
@@ -82,7 +82,7 @@ async def on_message(message):
             return
         channel = client.get_channel(channel_id)
         last_updated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        await message.channel.purge(limit=None)
+        await message.channel.purge(limit=3)
         while True:
             last_updated = await check_stations([server for set in server_list for server in server_sets[set]], {server: server_name for set in server_list for server, server_name in zip(server_sets[set], server_sets[set])}, last_updated, channel)
             await asyncio.sleep(update_interval)
