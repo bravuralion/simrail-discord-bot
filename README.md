@@ -13,6 +13,7 @@ This Discord bot is intended for Simrail Discord community servers. It shows in 
 ## Serverliste editieren
 
 You can edit the server list with **!stations**. To do this, you need to adjust the server names at line 12 in the code at **server_sets**:
+
 ![enter image description here](https://github.com/mrpowershell/simrail-discord-bot/raw/main/img/server_lists.jpg)
 ## Installing the bot on a Discord server
 
