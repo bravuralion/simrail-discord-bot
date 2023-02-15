@@ -10,8 +10,9 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 server_sets = {
-    'default': ['de1', 'de2', 'de3', 'de4', 'de5'],
-    'en': ['en1', 'en2', 'en3', 'en4', 'en5', 'en6']
+    'de': ['de1', 'de2', 'de3', 'de4', 'de5'],
+    'en': ['en1', 'en2', 'en3', 'en4', 'en5', 'en6', 'en7', 'en8']
+    'pl': ['pl1', 'pl2', 'pl3', 'pl4', 'pl5', 'pl8']
 }
 
 update_interval = 30
