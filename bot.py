@@ -64,12 +64,13 @@ async def on_ready():
 async def on_message(message):
     global channel_id
     if message.content.startswith('!set_channel'):
-        channel_id = int(message.content.split()[1])
-        await message.channel.send(f"Channel set to {channel_id}")
+        channel = message.channel_mentions[0]
+        channel_id = channel.id
+        await message.channel.send(f"Channel set to {channel.mention}")
         await message.channel.purge(limit=1)
     elif message.content.startswith('!stations'):
         if not channel_id:
-            await message.channel.send("Channel not set. Use !set_channel <channel_id> first.")
+            await message.channel.send("Channel not set. Use !set_channel <channel_mention> first.")
             return
         server_list = message.content.split()[1:]
         if not server_list:
